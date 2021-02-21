@@ -3,19 +3,18 @@ package tacos.web;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.validation.Errors;
+import org.springframework.web.bind.annotation.*;
 import tacos.Ingredient;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 import java.util.stream.Collectors;
 
 import tacos.Ingredient.Type;
 import tacos.Taco;
+
+import javax.validation.Valid;
 
 @Slf4j
 @Controller
@@ -51,6 +50,18 @@ public class DesignTacoController {
     public String showDesignForm(Model model) {
         model.addAttribute("taco", new Taco());
         return "design";
+    }
+
+    @PostMapping
+    public String processTaco(@Valid @ModelAttribute("taco") Taco taco, Errors errors) {
+        if (errors.hasErrors()) {
+            return "design";
+        }
+
+        // Save the taco...
+        // We'll do this chapter 3
+        log.info("Processing taco: " + taco);
+        return "redirect:/orders/current";
     }
 
     private List<Ingredient> filterByType(List<Ingredient> ingredients, Type type) {
